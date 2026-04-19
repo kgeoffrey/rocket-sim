@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rocket Launch Simulator</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar controls-sidebar">
+      <header>
+        <p class="eyebrow">Launch Dynamics</p>
+        <h1>Rocket Simulator</h1>
+      </header>
+
+      <section class="section">
+        <div class="status-row">
+          <div class="status-pill" id="statusPill">Ready</div>
+          <div class="status-note" id="statusNote">Vehicle on pad</div>
+        </div>
+
+        <h2>Controls</h2>
+        <div class="controls-grid" id="controlsWrap">
+          <div class="control">
+            <div class="control-head">
+              <span class="control-label">Preset Vehicle</span>
+            </div>
+            <select id="presetSelect" class="preset-select">
+              <option value="custom">Custom</option>
+              <option value="electron">Rocket Lab Electron</option>
+              <option value="falcon9">SpaceX Falcon 9</option>
+              <option value="saturnV">NASA Saturn V</option>
+              <option value="starship">SpaceX Starship / Super Heavy</option>
+            </select>
+          </div>
+
+          <div class="control">
+            <div class="control-head">
+              <span class="control-label">Launch Mass (kg)</span>
+              <span class="control-value" id="massValue">100,000</span>
+            </div>
+            <input id="massInput" type="range" min="10000" max="6000000" step="1000" value="100000" />
+          </div>
+
+          <div class="control">
+            <div class="control-head">
+              <span class="control-label">Thrust (kN)</span>
+              <span class="control-value" id="thrustValue">2,500</span>
+            </div>
+            <input id="thrustInput" type="range" min="100" max="80000" step="100" value="2500" />
+          </div>
+
+          <div class="control">
+            <div class="control-head">
+              <span class="control-label">Fuel Load (%)</span>
+              <span class="control-value" id="fuelValue">68</span>
+            </div>
+            <input id="fuelInput" type="range" min="1" max="98" step="1" value="68" />
+          </div>
+
+          <div class="control">
+            <div class="control-head">
+              <span class="control-label">Engine Isp (s)</span>
+              <span class="control-value" id="ispValue">320</span>
+            </div>
+            <input id="ispInput" type="range" min="220" max="420" step="5" value="320" />
+          </div>
+
+          <details class="settings-panel">
+            <summary>Settings</summary>
+            <div class="checks">
+              <div class="check">
+                <label for="dragToggle">
+                  <input id="dragToggle" type="checkbox" checked />
+                  Atmospheric Drag
+                </label>
+              </div>
+              <div class="check">
+                <label for="parallaxToggle">
+                  <input id="parallaxToggle" type="checkbox" checked />
+                  Parallax Effect
+                </label>
+              </div>
+              <div class="check">
+                <label for="fuelToggle">
+                  <input id="fuelToggle" type="checkbox" checked />
+                  Finite Fuel Model
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <div class="buttons">
+            <button class="launch" id="launchButton">Launch</button>
+            <button class="reset" id="resetButton">Reset</button>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+    <main class="panel sim-panel">
+      <canvas id="simCanvas"></canvas>
+      <div class="canvas-overlay">
+        <div class="overlay-chip" id="phaseChip">Ready</div>
+      </div>
+      <div class="zoom-overlay">
+        <div class="zoom-readout" id="zoomReadout">Zoom 0%</div>
+        <div class="zoom-controls" aria-label="Zoom controls">
+          <button class="zoom-button" id="zoomInButton" type="button" aria-label="Zoom in">+</button>
+          <button class="zoom-button" id="zoomOutButton" type="button" aria-label="Zoom out">−</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar telemetry-sidebar">
+      <section class="section telemetry-section">
+        <h2>Telemetry</h2>
+        <div class="telemetry-grid">
+          <div class="metric"><span class="metric-label">Altitude</span><span class="metric-value" id="metricAltitude">0.00 km</span></div>
+          <div class="metric"><span class="metric-label">Current Mass</span><span class="metric-value" id="metricMass">100,000 kg</span></div>
+          <div class="metric"><span class="metric-label">Horizontal Velocity</span><span class="metric-value" id="metricVx">0.0 m/s</span></div>
+          <div class="metric"><span class="metric-label">Vertical Velocity</span><span class="metric-value" id="metricVy">0.0 m/s</span></div>
+          <div class="metric"><span class="metric-label">Total Speed</span><span class="metric-value" id="metricSpeed">0.0 m/s</span></div>
+          <div class="metric"><span class="metric-label">TWR</span><span class="metric-value" id="metricTwr">2.55</span></div>
+          <div class="metric"><span class="metric-label">Gravity Tax</span><span class="metric-value" id="metricGravity">9.81 m/s²</span></div>
+          <div class="metric"><span class="metric-label">Drag Tax</span><span class="metric-value" id="metricDrag">0.00 m/s²</span></div>
+          <div class="metric"><span class="metric-label">G-Load</span><span class="metric-value" id="metricGload">1.00 g</span></div>
+          <div class="metric"><span class="metric-label">Fuel Remaining</span><span class="metric-value" id="metricFuel">68,000 kg</span></div>
+          <div class="metric"><span class="metric-label">Mission Time</span><span class="metric-value" id="metricTime">0.0 s</span></div>
+          <div class="metric"><span class="metric-label">Downrange</span><span class="metric-value" id="metricRange">0.00 km</span></div>
+          <div class="metric"><span class="metric-label">Pitch</span><span class="metric-value" id="metricPitch">90.0°</span></div>
+          <div class="metric"><span class="metric-label">Air Density</span><span class="metric-value" id="metricDensity">1.225 kg/m³</span></div>
+          <div class="metric"><span class="metric-label">Flight Phase</span><span class="metric-value" id="metricPhase">Ready</span></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <script src="./js/shared.js" defer></script>
+  <script src="./js/render.js" defer></script>
+  <script src="./js/app.js" defer></script>
+</body>
+</html>
