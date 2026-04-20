@@ -4,6 +4,8 @@ A cinematic browser-based rocket launch simulator built with plain HTML, CSS, an
 
 Live site: [kgeoffrey.github.io/rocket-sim](https://kgeoffrey.github.io/rocket-sim/)
 
+![Rocket Simulator screenshot](./assets/simulator-screenshot.png)
+
 This project focuses on making ascent feel readable and dramatic to a human viewer: heavy liftoff, visible thrust, a smooth gravity turn, changing atmosphere, curved-Earth scale cues, and a live telemetry panel that makes the flight legible without feeling like a spreadsheet.
 
 ## Highlights
