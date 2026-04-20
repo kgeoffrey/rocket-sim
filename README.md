@@ -2,6 +2,8 @@
 
 A polished browser-based rocket launch simulator built with plain HTML, CSS, and vanilla JavaScript.
 
+Live site: [kgeoffrey.github.io/rocket-sim](https://kgeoffrey.github.io/rocket-sim/)
+
 The app simulates a 2D launch from Earth with:
 
 - altitude-dependent gravity
